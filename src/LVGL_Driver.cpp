@@ -1,0 +1,100 @@
+/*****************************************************************************
+  | File        :   LVGL_Driver.c
+  
+  | help        : 
+    The provided LVGL library file must be installed first
+******************************************************************************/
+#include "LVGL_Driver.h"
+
+// LVGL 9 API - using lv_display_t and lv_indev_t
+lv_display_t * display = NULL;
+lv_indev_t * indev = NULL;
+
+void* buf1 = NULL;
+void* buf2 = NULL;
+    
+
+
+/* Serial debugging */
+void Lvgl_print(const char * buf)
+{
+    // Serial.printf(buf);
+    // Serial.flush();
+}
+
+/*  Display flushing 
+    Displays LVGL content on the LCD
+    This function implements associating LVGL data to the LCD screen
+*/
+void Lvgl_Display_LCD( lv_display_t *display, const lv_area_t *area, uint8_t *color_p )
+{
+  LCD_addWindow(area->x1, area->y1, area->x2, area->y2, color_p);
+  lv_display_flush_ready( display );
+}
+/*Read the touchpad*/
+void Lvgl_Touchpad_Read( lv_indev_t * indev, lv_indev_data_t * data )
+{
+  uint16_t touchpad_x[GT911_LCD_TOUCH_MAX_POINTS] = {0};
+  uint16_t touchpad_y[GT911_LCD_TOUCH_MAX_POINTS] = {0};
+  uint16_t strength[GT911_LCD_TOUCH_MAX_POINTS]   = {0};
+  uint8_t touchpad_cnt = 0;
+  Touch_Read_Data();
+  uint8_t touchpad_pressed = Touch_Get_XY(touchpad_x, touchpad_y, strength, &touchpad_cnt, GT911_LCD_TOUCH_MAX_POINTS);
+  if (touchpad_pressed && touchpad_cnt > 0) {
+    data->point.x = touchpad_x[0];
+    data->point.y = touchpad_y[0];
+    data->state = LV_INDEV_STATE_PRESSED;
+    printf("LVGL : X=%u Y=%u num=%d\r\n", touchpad_x[0], touchpad_y[0],touchpad_cnt);
+  } else {
+    data->state = LV_INDEV_STATE_RELEASED;
+  }
+}
+void example_increase_lvgl_tick(void *arg)
+{
+    /* Tell LVGL how many milliseconds has elapsed */
+    lv_tick_inc(EXAMPLE_LVGL_TICK_PERIOD_MS);
+}
+void Lvgl_Init(void)
+{
+  lv_init();
+  
+  // Allocate buffers in SPIRAM
+  buf1 = (lv_color_t*) heap_caps_malloc(LVGL_BUF_LEN, MALLOC_CAP_SPIRAM);
+  buf2 = (lv_color_t*) heap_caps_malloc(LVGL_BUF_LEN, MALLOC_CAP_SPIRAM);
+  
+  // Create display using new LVGL 9 API
+  display = lv_display_create(LVGL_WIDTH, LVGL_HEIGHT);
+  
+  // Set the flush callback
+  lv_display_set_flush_cb(display, Lvgl_Display_LCD);
+  
+  // Set the buffers - note: size is now in bytes, not pixels
+  lv_display_set_buffers(display, buf1, buf2, LVGL_BUF_LEN, LV_DISPLAY_RENDER_MODE_PARTIAL);
+  
+  // Set user data if needed
+  lv_display_set_user_data(display, panel_handle);
+
+  // Create input device using new LVGL 9 API
+  indev = lv_indev_create();
+  lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+  lv_indev_set_read_cb(indev, Lvgl_Touchpad_Read);
+
+  // Create simple label - using updated API
+  lv_obj_t *label = lv_label_create( lv_screen_active() );
+  lv_label_set_text( label, "Hello Arduino and LVGL 9!");
+  lv_obj_align( label, LV_ALIGN_CENTER, 0, 0 );
+
+  // Setup timer for LVGL tick
+  const esp_timer_create_args_t lvgl_tick_timer_args = {
+    .callback = &example_increase_lvgl_tick,
+    .name = "lvgl_tick"
+  };
+  esp_timer_handle_t lvgl_tick_timer = NULL;
+  esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer);
+  esp_timer_start_periodic(lvgl_tick_timer, EXAMPLE_LVGL_TICK_PERIOD_MS * 1000);
+}
+void Lvgl_Loop(void)
+{
+  lv_timer_handler(); /* let the GUI do its work */
+  // delay( 5 );
+}
