@@ -186,8 +186,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  246,
-                  -194
+                  92,
+                  -181
                 ],
                 "InheritedType": 7
               },
@@ -386,7 +386,6 @@
           },
           {
             "nid": 90,
-            "flags": 1048576,
             "strtype": "OBJECT/Flags",
             "InheritedType": 1
           },
@@ -782,8 +781,8 @@
                 "flags": 17,
                 "strtype": "OBJECT/Position",
                 "intarray": [
-                  -239,
-                  -187
+                  -150,
+                  -175
                 ],
                 "InheritedType": 7
               },
@@ -1097,10 +1096,10 @@
     "theme_dark": true,
     "theme_color1": 5,
     "theme_color2": 0,
-    "uiExportFolderPath": "/Users/vitormhenrique/dev/vitor/rc_remote/ESP32-S3-Touch-LCD-2.8B-Controller/squareline_studio/ui",
-    "projectExportFolderPath": "",
+    "uiExportFolderPath": "/Users/vitormhenrique/dev/vitor/rc_remote/ESP32-S3-Touch-LCD-2.8B-Controller/src/ui",
+    "projectExportFolderPath": "/Users/vitormhenrique/dev/vitor/rc_remote/ESP32-S3-Touch-LCD-2.8B-Controller/src/ui",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 2,
+    "backup_cnt": 4,
     "autosave_cnt": 0,
     "group_color_cnt": 0,
     "lvgl_version": "9.1.0",
