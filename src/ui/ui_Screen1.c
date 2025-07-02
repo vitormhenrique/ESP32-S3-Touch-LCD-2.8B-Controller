@@ -25,8 +25,8 @@ lv_obj_remove_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 ui_Button1 = lv_button_create(ui_Screen1);
 lv_obj_set_width( ui_Button1, 100);
 lv_obj_set_height( ui_Button1, 50);
-lv_obj_set_x( ui_Button1, 246 );
-lv_obj_set_y( ui_Button1, -194 );
+lv_obj_set_x( ui_Button1, 92 );
+lv_obj_set_y( ui_Button1, -181 );
 lv_obj_set_align( ui_Button1, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_remove_flag( ui_Button1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags

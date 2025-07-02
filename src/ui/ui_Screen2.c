@@ -33,8 +33,8 @@ lv_label_set_text(ui_Label3,"Settings");
 ui_Button2 = lv_button_create(ui_Screen2);
 lv_obj_set_width( ui_Button2, 100);
 lv_obj_set_height( ui_Button2, 50);
-lv_obj_set_x( ui_Button2, -239 );
-lv_obj_set_y( ui_Button2, -187 );
+lv_obj_set_x( ui_Button2, -150 );
+lv_obj_set_y( ui_Button2, -175 );
 lv_obj_set_align( ui_Button2, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_Button2, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_remove_flag( ui_Button2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
