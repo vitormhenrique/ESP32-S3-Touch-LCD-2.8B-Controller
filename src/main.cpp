@@ -29,6 +29,7 @@ void Driver_Loop(void *parameter)
 }
 void setup()
 {
+  allocate_rotation_buffer();
   Driver_Init();
   LCD_Init();                                     // If you later reinitialize the LCD, you must initialize the SD card again !!!!!!!!!!
   SD_Init(); // It must be initialized after the LCD, and if the LCD is reinitialized later, the SD also needs to be reinitialized

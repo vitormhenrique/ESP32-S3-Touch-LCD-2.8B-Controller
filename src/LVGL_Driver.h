@@ -17,6 +17,7 @@
 extern lv_display_t * display;
 extern lv_indev_t * indev;
 
+void allocate_rotation_buffer();
 void Lvgl_print(const char * buf);
 void Lvgl_Display_LCD( lv_display_t *display, const lv_area_t *area, uint8_t *color_p ); // Displays LVGL content on the LCD.    This function implements associating LVGL data to the LCD screen
 void Lvgl_Touchpad_Read( lv_indev_t * indev, lv_indev_data_t * data );                // Read the touchpad
