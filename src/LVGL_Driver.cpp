@@ -72,13 +72,68 @@ void Lvgl_Touchpad_Read( lv_indev_t * indev, lv_indev_data_t * data )
   uint16_t touchpad_y[GT911_LCD_TOUCH_MAX_POINTS] = {0};
   uint16_t strength[GT911_LCD_TOUCH_MAX_POINTS]   = {0};
   uint8_t touchpad_cnt = 0;
+  
   Touch_Read_Data();
   uint8_t touchpad_pressed = Touch_Get_XY(touchpad_x, touchpad_y, strength, &touchpad_cnt, GT911_LCD_TOUCH_MAX_POINTS);
+  
   if (touchpad_pressed && touchpad_cnt > 0) {
-    data->point.x = touchpad_x[0];
-    data->point.y = touchpad_y[0];
+    // Get the display rotation
+    lv_display_rotation_t rotation = lv_display_get_rotation(display);
+    
+    // Raw touch coordinates from sensor
+    uint16_t raw_x = touchpad_x[0];
+    uint16_t raw_y = touchpad_y[0];
+    
+    // Transform coordinates based on rotation to LVGL logical coordinates
+    uint16_t transformed_x, transformed_y;
+    
+    switch(rotation) {
+      case LV_DISPLAY_ROTATION_0:
+        // No rotation - direct mapping
+        transformed_x = raw_x;
+        transformed_y = raw_y;
+        break;
+        
+      case LV_DISPLAY_ROTATION_90:
+        transformed_x = raw_y;
+        transformed_y = ESP_PANEL_LCD_WIDTH- raw_x;
+        break;
+        
+      case LV_DISPLAY_ROTATION_180:
+        // 180 degrees: (x,y) -> (ESP_PANEL_LCD_WIDTH-x, ESP_PANEL_LCD_HEIGHT-y)
+        // todo: UNTESTED
+        transformed_x = ESP_PANEL_LCD_WIDTH - raw_x;
+        transformed_y = ESP_PANEL_LCD_HEIGHT - raw_y;
+        break;
+        
+      case LV_DISPLAY_ROTATION_270:
+        // 270 degrees clockwise: (x,y) -> (y, ESP_PANEL_LCD_HEIGHT-x)
+        // todo: UNTESTED
+        transformed_x = raw_y;
+        transformed_y = ESP_PANEL_LCD_HEIGHT - raw_x;
+        break;
+        
+      default:
+        // Fallback to no rotation
+        transformed_x = raw_x;
+        transformed_y = raw_y;
+        break;
+    }
+    
+    // Get current logical display dimensions for bounds checking
+    int32_t logical_width = lv_display_get_horizontal_resolution(display);
+    int32_t logical_height = lv_display_get_vertical_resolution(display);
+    
+    // Ensure coordinates are within current logical bounds
+    if (transformed_x >= logical_width) transformed_x = logical_width - 1;
+    if (transformed_y >= logical_height) transformed_y = logical_height - 1;
+    
+    data->point.x = transformed_x;
+    data->point.y = transformed_y;
     data->state = LV_INDEV_STATE_PRESSED;
-    printf("LVGL : X=%u Y=%u num=%d\r\n", touchpad_x[0], touchpad_y[0],touchpad_cnt);
+    
+    printf("LVGL Touch: Raw(%u,%u) -> Logical(%u,%u) Rotation=%d LogicalRes=%ldx%ld\r\n", 
+           raw_x, raw_y, transformed_x, transformed_y, rotation, logical_width, logical_height);
   } else {
     data->state = LV_INDEV_STATE_RELEASED;
   }
@@ -98,6 +153,8 @@ void Lvgl_Init(void)
   
   // Create display using new LVGL 9 API
   display = lv_display_create(LVGL_WIDTH, LVGL_HEIGHT);
+
+  lv_disp_set_rotation(display, LV_DISPLAY_ROTATION_90); // Set rotation if needed
   
   // Set the flush callback
   lv_display_set_flush_cb(display, Lvgl_Display_LCD);
@@ -132,3 +189,5 @@ void Lvgl_Loop(void)
   lv_timer_handler(); /* let the GUI do its work */
   // delay( 5 );
 }
+  // delay( 5 );
+
