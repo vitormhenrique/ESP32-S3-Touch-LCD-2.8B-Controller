@@ -12,8 +12,9 @@ lv_indev_t * indev = NULL;
 
 void* buf1 = NULL;
 void* buf2 = NULL;
-    
 
+/* 1.  One full‑screen buffer (RGB565) for rotation */
+// static uint8_t rot_buf[LVGL_WIDTH * LVGL_HEIGHT * 2]; 
 
 /* Serial debugging */
 void Lvgl_print(const char * buf)
@@ -26,10 +27,37 @@ void Lvgl_print(const char * buf)
     Displays LVGL content on the LCD
     This function implements associating LVGL data to the LCD screen
 */
-void Lvgl_Display_LCD( lv_display_t *display, const lv_area_t *area, uint8_t *color_p )
+void Lvgl_Display_LCD(lv_display_t *disp,
+                      const lv_area_t *area,
+                      uint8_t *px_map)
 {
-  LCD_addWindow(area->x1, area->y1, area->x2, area->y2, color_p);
-  lv_display_flush_ready( display );
+    lv_display_rotation_t rotation = lv_display_get_rotation(disp);
+
+    /* --- Rotate if needed ------------------------------------ */
+    lv_area_t rotated_area = *area;             /* destination window on the LCD */
+
+       if(rotation != LV_DISPLAY_ROTATION_0) {
+        lv_color_format_t cf = lv_display_get_color_format(disp);
+        /*Calculate the position of the rotated area*/
+        rotated_area = *area;
+        lv_display_rotate_area(disp, &rotated_area);
+        /*Calculate the source stride (bytes in a line) from the width of the area*/
+        uint32_t src_stride = lv_draw_buf_width_to_stride(lv_area_get_width(area), cf);
+        /*Calculate the stride of the destination (rotated) area too*/
+        uint32_t dest_stride = lv_draw_buf_width_to_stride(lv_area_get_width(&rotated_area), cf);
+        /*Have a buffer to store the rotated area and perform the rotation*/
+        static uint8_t rotated_buf[500*1014];
+        int32_t src_w = lv_area_get_width(area);
+        int32_t src_h = lv_area_get_height(area);
+        lv_draw_sw_rotate(px_map, rotated_buf, src_w, src_h, src_stride, dest_stride, rotation, cf);
+        /*Use the rotated area and rotated buffer from now on*/
+        // area = &rotated_area;
+        // px_map = rotated_buf;
+    }
+
+    /* --- Push to ST7701 -------------------------------------- */
+    LCD_addWindow(area->x1, area->y1, area->x2, area->y2, px_map);
+    lv_display_flush_ready(disp);
 }
 /*Read the touchpad*/
 void Lvgl_Touchpad_Read( lv_indev_t * indev, lv_indev_data_t * data )
