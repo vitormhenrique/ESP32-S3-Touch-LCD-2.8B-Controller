@@ -25,3 +25,7 @@ void example_increase_lvgl_tick(void *arg);
 
 void Lvgl_Init(void);
 void Lvgl_Loop(void);
+
+// Debug functions
+void debug_touch_areas(void);
+void test_touch_point(int16_t x, int16_t y);
