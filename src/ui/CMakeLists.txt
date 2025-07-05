@@ -2,6 +2,8 @@ SET(SOURCES ui_Screen1.c
     ui_Screen2.c
     ui.c
     ui_comp_hook.c
-    ui_helpers.c)
+    ui_helpers.c
+    ui_img_settings_34dp_e3e3e3_fill0_wght400_grad0_opsz40_png.c
+    ui_img_home_34dp_e3e3e3_fill0_wght400_grad0_opsz40_png.c)
 
 add_library(ui ${SOURCES})

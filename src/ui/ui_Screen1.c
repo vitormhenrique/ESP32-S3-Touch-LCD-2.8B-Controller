@@ -5,13 +5,13 @@
 
 #include "ui.h"
 
-lv_obj_t *ui_Screen1 = NULL;lv_obj_t *ui_Button1 = NULL;lv_obj_t *ui_Label5 = NULL;
+lv_obj_t *ui_Screen1 = NULL;lv_obj_t *ui_Button1 = NULL;lv_obj_t *ui_Spinner1 = NULL;
 // event funtions
 void ui_event_Button1( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
 if ( event_code == LV_EVENT_CLICKED) {
-      _ui_screen_change( &ui_Screen2, LV_SCR_LOAD_ANIM_MOVE_RIGHT, 500, 0, &ui_Screen2_screen_init);
+      _ui_screen_change( &ui_Screen2, LV_SCR_LOAD_ANIM_MOVE_LEFT, 100, 0, &ui_Screen2_screen_init);
 }
 }
 
@@ -23,19 +23,25 @@ ui_Screen1 = lv_obj_create(NULL);
 lv_obj_remove_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_Button1 = lv_button_create(ui_Screen1);
-lv_obj_set_width( ui_Button1, 100);
+lv_obj_set_width( ui_Button1, 50);
 lv_obj_set_height( ui_Button1, 50);
-lv_obj_set_x( ui_Button1, 92 );
-lv_obj_set_y( ui_Button1, -181 );
+lv_obj_set_x( ui_Button1, 280 );
+lv_obj_set_y( ui_Button1, -200 );
 lv_obj_set_align( ui_Button1, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_Button1, LV_OBJ_FLAG_SCROLL_ON_FOCUS );   /// Flags
 lv_obj_remove_flag( ui_Button1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_bg_color(ui_Button1, lv_color_hex(0x5D5D5D), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_bg_opa(ui_Button1, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_bg_image_src( ui_Button1, &ui_img_settings_34dp_e3e3e3_fill0_wght400_grad0_opsz40_png, LV_PART_MAIN | LV_STATE_DEFAULT );
 
-ui_Label5 = lv_label_create(ui_Button1);
-lv_obj_set_width( ui_Label5, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_Label5, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_align( ui_Label5, LV_ALIGN_CENTER );
-lv_label_set_text(ui_Label5,"Settings");
+ui_Spinner1 = lv_spinner_create(ui_Screen1);
+//lv_spinner_set_anim_params(ui_Spinner1, 1000, 90);
+lv_obj_set_width( ui_Spinner1, 80);
+lv_obj_set_height( ui_Spinner1, 80);
+lv_obj_set_x( ui_Spinner1, -50 );
+lv_obj_set_y( ui_Spinner1, 20 );
+lv_obj_set_align( ui_Spinner1, LV_ALIGN_CENTER );
+lv_obj_remove_flag( ui_Spinner1, LV_OBJ_FLAG_CLICKABLE );    /// Flags
 
 lv_obj_add_event_cb(ui_Button1, ui_event_Button1, LV_EVENT_ALL, NULL);
 
@@ -48,6 +54,6 @@ void ui_Screen1_screen_destroy(void)
 // NULL screen variables
 ui_Screen1= NULL;
 ui_Button1= NULL;
-ui_Label5= NULL;
+ui_Spinner1= NULL;
 
 }

@@ -37,7 +37,7 @@ static void global_touch_event(lv_event_t * e) {
 
 void setup()
 {
-  delay(1000);
+  delay(100);
   allocate_rotation_buffer();
   Driver_Init();
   LCD_Init();                                     // If you later reinitialize the LCD, you must initialize the SD card again !!!!!!!!!!
