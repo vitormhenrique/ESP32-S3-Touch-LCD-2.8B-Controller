@@ -151,6 +151,14 @@ void lv_display_set_physical_resolution(lv_display_t * disp, int32_t hor_res, in
  */
 void lv_display_set_offset(lv_display_t * disp, int32_t x, int32_t y);
 
+
+/**
+ * Rotate an area in-place according to the display's rotation
+ * @param disp      pointer to a display
+ * @param area      pointer to an area to rotate
+ */
+void lv_display_rotate_area(lv_display_t * disp, lv_area_t * area);
+
 /**
  * Set the rotation of this display. LVGL will swap the horizontal and vertical resolutions internally.
  * @param disp      pointer to a display (NULL to use the default display)
